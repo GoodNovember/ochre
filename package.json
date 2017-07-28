@@ -1,0 +1,10 @@
+{
+  "name": "ochre",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Victor Lawrence <madhatterblues@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^1.6.11"
+  }
+}
