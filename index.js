@@ -1,7 +1,43 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const url = require('url')
+const oWSS = require("./ochreWSS.js")
 
+const oLibrary = require("./ochreMusicLibrary")
+
+let activeServer = null
+let ochreWSSData = null
+
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg)  // prints "ping"
+  event.sender.send('asynchronous-reply', 'pong')
+})
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg)  // prints "ping"
+  event.returnValue = 'pong'
+})
+
+ipcMain.on('get-local-library', (event, arg)=>{
+  oLibrary.getLibraryData().then((library)=>{
+    event.sender.send("local-library", library)
+  })
+})
+
+ipcMain.on('get-remote-library', (event, erg)=>{
+
+})
+
+ipcMain.on("poke-server", (event, arg) =>{
+  if(!activeServer){
+    ochreWSSData = oWSS.create()
+    activeServer = ochreWSSData.wss
+    event.sender.send("server-is-created", true)
+  }
+  setTimeout(function() {
+    event.sender.send("server-is-alive", ochreWSSData.url)
+  }, 500);
+})
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
